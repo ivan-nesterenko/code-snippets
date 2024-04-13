@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "lint": "pnpm eslint .",
-    "prettier": "pnpm prettier . --write"
+    "prettier": "pnpm exec prettier . --write"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
