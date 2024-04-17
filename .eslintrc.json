@@ -1,14 +1,15 @@
 {
   "root": true,
   "ignorePatterns": ["node_modules", "dist"],
-  "plugins": ["@typescript-eslint", "prettier", "naming-convention", "unicorn", "perfectionist"],
+  "plugins": ["@typescript-eslint", "prettier", "naming-convention", "unicorn", "perfectionist","react-hooks"],
   "extends": [
     "plugin:perfectionist/recommended-natural",
     "prettier",
     "eslint:recommended",
     "plugin:prettier/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "overrides": [
