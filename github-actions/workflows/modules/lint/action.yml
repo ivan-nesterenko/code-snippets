@@ -1,0 +1,25 @@
+name: Lint
+description: Lint
+
+inputs:
+  auto_commit_message:
+    required: true
+    description: Message for commit
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Node.js
+      uses: ./.github/workflows/utils/setup-node
+
+    - name: Install dependencies
+      uses: ./.github/workflows/modules/install-dependencies
+
+    - name: Lint
+      shell: bash
+      run: pnpm nx run-many --targets=lint --verbose
+
+    - name: Auto commit
+      uses: ./.github/workflows/utils/auto-commit
+      with:
+        message: ${{ inputs.auto_commit_message }}

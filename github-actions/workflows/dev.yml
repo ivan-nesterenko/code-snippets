@@ -1,0 +1,19 @@
+name: Dev checks
+
+on: push
+
+permissions:
+  contents: write
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    name: "Linting"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Linting
+        uses: ./.github/workflows/modules/lint
+        with:
+          auto_commit_message: Automated lint fix
