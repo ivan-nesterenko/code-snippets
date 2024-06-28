@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDebounce } from "./use-debounce";
 import { twMerge } from "tailwind-merge";
-import { timer } from "../../utils";
+import { timer } from "../utils";
 
 export enum AnimationsVariant {
   SLIDE_LEFT = "slide-left",
