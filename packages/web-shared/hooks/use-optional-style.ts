@@ -1,25 +1,41 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDebounce } from "./use-debounce";
 import { twMerge } from "tailwind-merge";
-import { timer } from "./utils";
+import { timer } from "../../utils";
 
 export enum AnimationsVariant {
-  SLIDE = "slide",
+  SLIDE_LEFT = "slide-left",
   SLIDE_RIGHT = "slide-right",
-  SLIDE_TOP = "slide-top",
+  SLIDE_UP = "slide-up",
+  SLIDE_DOWN = "slide-down",
+  SCALE = "scale",
   FADE = "fade",
 }
+
+const animationConstructor =
+  (showAnimation: string, hideAnimation: string) => (isOpen: boolean) =>
+    isOpen ? showAnimation : hideAnimation;
 
 export const animations: Record<
   keyof typeof AnimationsVariant,
   (state: boolean) => string
 > = {
-  SLIDE: (isOpen: boolean) => (isOpen ? "animate-show" : "-translate-x-full"),
-  SLIDE_RIGHT: (isOpen: boolean) =>
-    isOpen ? "animate-showRight animate-fade" : "translate-x-1/2 opacity-0",
-  SLIDE_TOP: (isOpen: boolean) =>
-    isOpen ? "animate-showTop animate-fade" : "-translate-y-1/2 opacity-0",
-  FADE: (isOpen: boolean) => (isOpen ? "animate-fade" : "opacity-0"),
+  SLIDE_LEFT: animationConstructor(
+    "animate-slideInLeft",
+    "animate-slideOutLeft",
+  ),
+
+  SLIDE_RIGHT: animationConstructor(
+    "animate-slideInRight",
+    "animate-slideOutRight",
+  ),
+  SLIDE_UP: animationConstructor("animate-slideInUp", "animate-slideOutUp"),
+  SLIDE_DOWN: animationConstructor(
+    "animate-slideInDown",
+    "animate-slideOutDown",
+  ),
+  SCALE: animationConstructor("animate-scaleIn", "animate-scaleOut"),
+  FADE: animationConstructor("animate-fadeIn", "animate-fadeOut"),
 };
 
 export enum AnimationsTimingKeys {
@@ -32,10 +48,10 @@ export const animationsTimings: Record<AnimationsTimingKeys, { ms: number }> = {
     ms: 200,
   },
   [AnimationsTimingKeys.MEDIUM]: {
-    ms: 500,
+    ms: 400,
   },
   [AnimationsTimingKeys.LONG]: {
-    ms: 700,
+    ms: 600,
   },
 };
 
@@ -50,7 +66,7 @@ export type OptionalDefaultStylePropsVariant = {
 };
 
 export type OptionalStyleProps = {
-  timing: keyof typeof AnimationsTimingKeys;
+  timing: keyof typeof AnimationsTimingKeys | number;
   initialEnabled?: boolean;
   onEnable?: () => void;
   onDisable?: () => void;
@@ -66,17 +82,21 @@ export const useOptionalStyle = ({
 }: OptionalStyleProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const measureTime = timer();
+  const animationsSpeed = useMemo(
+    () =>
+      typeof timing === "number"
+        ? timing
+        : animationsTimings[AnimationsTimingKeys[timing]].ms,
+    [timing],
+  );
 
   const elementStyleController = useCallback(
-    (
-      state: boolean,
-      animationsSpeed = animationsTimings[AnimationsTimingKeys[timing]].ms,
-    ) => {
+    (state: boolean, customAnimationsSpeed = animationsSpeed) => {
       if (!ref?.current) return;
 
-      ref.current.style.animationDuration = animationsSpeed + "ms";
+      ref.current.style.animationDuration = customAnimationsSpeed + "ms";
 
-      ref.current.style.transitionDuration = animationsSpeed + "ms";
+      ref.current.style.transitionDuration = customAnimationsSpeed + "ms";
 
       ref.current.className = twMerge(
         ref.current.className,
@@ -85,7 +105,7 @@ export const useOptionalStyle = ({
           : customAnimationStyle(state),
       );
     },
-    [animationStyle, customAnimationStyle, timing],
+    [animationStyle, animationsSpeed, customAnimationStyle],
   );
 
   useEffect(() => {
@@ -98,7 +118,7 @@ export const useOptionalStyle = ({
     callback: () => {
       onEnable?.();
     },
-    debounce: animationsTimings[AnimationsTimingKeys[timing]].ms,
+    debounce: animationsSpeed,
   });
 
   const {
@@ -107,7 +127,7 @@ export const useOptionalStyle = ({
     callback: () => {
       onDisable?.();
     },
-    debounce: animationsTimings[AnimationsTimingKeys[timing]].ms,
+    debounce: animationsSpeed,
   });
 
   const enableStyle = useCallback(() => {
@@ -120,19 +140,18 @@ export const useOptionalStyle = ({
 
   const disableStyle = useCallback(() => {
     measureTime((time) => {
-      if (time < animationsTimings[AnimationsTimingKeys[timing]].ms) return;
+      if (time < animationsSpeed) return;
       elementStyleController(false);
 
       if (!onDisable) return;
-
       debounceOnDisableCallback({});
     });
   }, [
+    animationsSpeed,
     debounceOnDisableCallback,
     elementStyleController,
     measureTime,
     onDisable,
-    timing,
   ]);
 
   return { enableStyle, disableStyle, ref };
