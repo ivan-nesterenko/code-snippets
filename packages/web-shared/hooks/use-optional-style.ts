@@ -81,6 +81,7 @@ export const useOptionalStyle = ({
   animationStyle,
 }: OptionalStyleProps) => {
   const ref = useRef<HTMLDivElement>(null);
+  const refAnimationState = useRef(false);
   const measureTime = timer();
   const animationsSpeed = useMemo(
     () =>
@@ -94,9 +95,9 @@ export const useOptionalStyle = ({
     (state: boolean, customAnimationsSpeed = animationsSpeed) => {
       if (!ref?.current) return;
 
-      ref.current.style.animationDuration = customAnimationsSpeed + "ms";
+      ref.current.style.animationDuration = customAnimationsSpeed + 20 + "ms";
 
-      ref.current.style.transitionDuration = customAnimationsSpeed + "ms";
+      ref.current.style.transitionDuration = customAnimationsSpeed + 20 + "ms";
 
       ref.current.className = twMerge(
         ref.current.className,
@@ -110,20 +111,17 @@ export const useOptionalStyle = ({
 
   useEffect(() => {
     elementStyleController(initialEnabled ?? true);
+    refAnimationState.current = initialEnabled ?? true;
   }, [elementStyleController, initialEnabled]);
 
-  const {
-    debounceCallback: debounceOnEnableCallback,
-  } = useDebounce({
+  const { debounceCallback: debounceOnEnableCallback } = useDebounce({
     callback: () => {
       onEnable?.();
     },
     debounce: animationsSpeed,
   });
 
-  const {
-    debounceCallback: debounceOnDisableCallback,
-  } = useDebounce({
+  const { debounceCallback: debounceOnDisableCallback } = useDebounce({
     callback: () => {
       onDisable?.();
     },
@@ -131,7 +129,10 @@ export const useOptionalStyle = ({
   });
 
   const enableStyle = useCallback(() => {
+    if (refAnimationState.current) return (refAnimationState.current = false);
+
     elementStyleController(true);
+    refAnimationState.current = true;
 
     if (!onEnable) return;
 
@@ -139,6 +140,8 @@ export const useOptionalStyle = ({
   }, [debounceOnEnableCallback, elementStyleController, onEnable]);
 
   const disableStyle = useCallback(() => {
+    if (!refAnimationState.current) return (refAnimationState.current = true);
+    refAnimationState.current = false;
     measureTime((time) => {
       if (time < animationsSpeed) return;
       elementStyleController(false);
