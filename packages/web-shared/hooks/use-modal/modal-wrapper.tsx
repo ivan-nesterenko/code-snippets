@@ -30,6 +30,7 @@ export type ModalVariantProps = {
   mode?: keyof typeof ModalWrapperMode;
   onBgClick?: () => void;
   className?: string;
+  autoCloseOnBgClick?: boolean;
   bgAnimationProps?: BgAnimationProps;
 };
 
@@ -48,14 +49,15 @@ export const ModalWrapper: FC<ModalWrapperProps> = memo(
       animationStyle: "FADE" as const,
       timing: "MEDIUM" as const,
     },
+    autoCloseOnBgClick = true,
   }) => {
     const { disableStyle: disableWrapperStyle, ref } =
       useOptionalStyle(bgAnimationProps);
 
     const handleBgClick = useCallback(() => {
-      disableWrapperStyle();
+      autoCloseOnBgClick && disableWrapperStyle();
       onBgClick?.();
-    }, [disableWrapperStyle, onBgClick]);
+    }, [autoCloseOnBgClick, disableWrapperStyle, onBgClick]);
 
     return (
       <div
@@ -84,3 +86,4 @@ export const ModalWrapper: FC<ModalWrapperProps> = memo(
     );
   },
 );
+
