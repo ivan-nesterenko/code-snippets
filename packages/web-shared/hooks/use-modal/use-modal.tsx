@@ -68,15 +68,9 @@ const ModalList: FC<ModalListProps> = memo(({ modalsData, cascadeRender }) =>
 export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
   const [modals, setModals] = useState<ModalProperties[]>([]);
 
-  const openModalWithHistory = useCallback(
-    (content: ReactNode, params?: Partial<ModalVariantProps>) =>
+  const openModal = useCallback(
+    (content: ReactNode, params?: ModalParamsProps) =>
       setModals((prevProps) => [...prevProps, { content: content, ...params }]),
-    [],
-  );
-
-  const openModalWithoutHistory = useCallback(
-    (content: ReactNode, params?: Partial<ModalVariantProps>) =>
-      setModals(() => [{ content: content, ...params }]),
     [],
   );
 
@@ -91,10 +85,9 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
 
   const modalContextValue: ModalContextProperties = useMemo(
     () => ({
-      openModalWithHistory,
+      openModal,
       closeModal,
       closeAllModals,
-      openModalWithoutHistory,
       modals,
       ModalWrapper,
       isOpenModal: modals.length > 0,
@@ -103,8 +96,7 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
       closeAllModals,
       closeModal,
       modals,
-      openModalWithHistory,
-      openModalWithoutHistory,
+      openModal,
     ],
   );
 
