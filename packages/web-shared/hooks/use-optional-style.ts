@@ -110,8 +110,8 @@ export const useOptionalStyle = ({
   );
 
   useEffect(() => {
-    elementStyleController(initialEnabled ?? true);
     refAnimationState.current = initialEnabled ?? true;
+    elementStyleController(initialEnabled ?? true);
   }, [elementStyleController, initialEnabled]);
 
   const { debounceCallback: debounceOnEnableCallback } = useDebounce({
@@ -130,9 +130,9 @@ export const useOptionalStyle = ({
 
   const enableStyle = useCallback(() => {
     if (refAnimationState.current) return (refAnimationState.current = false);
+    refAnimationState.current = true;
 
     elementStyleController(true);
-    refAnimationState.current = true;
 
     if (!onEnable) return;
 
