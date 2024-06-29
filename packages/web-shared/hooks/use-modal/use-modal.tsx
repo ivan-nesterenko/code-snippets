@@ -122,4 +122,4 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
   );
 };
 
-export const useOverlay = () => useContext(modalContext);
+export const useModal = () => useContext(modalContext);
