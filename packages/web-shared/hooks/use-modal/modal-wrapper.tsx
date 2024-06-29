@@ -51,13 +51,15 @@ export const ModalWrapper: FC<ModalWrapperProps> = memo(
     },
     autoCloseOnBgClick = true,
   }) => {
-    const { disableStyle: disableWrapperStyle, ref } =
-      useOptionalStyle(bgAnimationProps);
+   const { disableStyle: disableWrapperStyle, ref } = useOptionalStyle({
+      ...bgAnimationProps,
+      onDisable: autoCloseOnBgClick ? onBgClick : bgAnimationProps.onDisable,
+    });
 
-    const handleBgClick = useCallback(() => {
-      autoCloseOnBgClick && disableWrapperStyle();
-      onBgClick?.();
-    }, [autoCloseOnBgClick, disableWrapperStyle, onBgClick]);
+    const handleBgClick = useCallback(
+      () => (autoCloseOnBgClick ? disableWrapperStyle() : onBgClick?.()),
+      [autoCloseOnBgClick, disableWrapperStyle, onBgClick],
+    );
 
     return (
       <div
