@@ -37,6 +37,7 @@ type ModalContextProperties = {
   closeModal: () => void;
   closeAllModals: () => void;
   ModalWrapper: FC<ModalWrapperProps>;
+  isOpenModal: boolean;
 };
 
 const modalContext = createContext<ModalContextProperties>({
@@ -46,6 +47,7 @@ const modalContext = createContext<ModalContextProperties>({
   closeModal: () => "",
   closeAllModals: () => "",
   ModalWrapper,
+  isOpenModal: false,
 });
 
 type ModalListProps = {
@@ -95,6 +97,7 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
       openModalWithoutHistory,
       modals,
       ModalWrapper,
+      isOpenModal: modals.length > 0,
     }),
     [
       closeAllModals,
