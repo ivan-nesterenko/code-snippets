@@ -19,7 +19,7 @@ type ModalProviderProps = {
 };
 
 type ModalParamsProps = {
-  showCascadingModels?: boolean;
+  showCascading?: boolean;
 } & Partial<ModalVariantProps>;
 
 type ModalProperties = {
@@ -37,7 +37,7 @@ type ModalContextProperties = {
 };
 
 const modalContext = createContext<ModalContextProperties>({
-  modals: [{ content: <></>, params: { showCascadingModels: false } }],
+  modals: [{ content: <></>, params: { showCascading: false } }],
   openModal: () => "",
   closeModal: () => "",
   closeAllModals: () => "",
@@ -95,7 +95,7 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
       {modals.length > 0 && (
         <ModalList
           modalsData={modals}
-          cascadeRender={!!currentModal?.params?.showCascadingModels}
+          cascadeRender={!!currentModal?.params?.showCascading}
         />
       )}
 
