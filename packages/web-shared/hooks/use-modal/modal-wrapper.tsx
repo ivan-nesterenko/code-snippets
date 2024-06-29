@@ -64,12 +64,12 @@ export const ModalWrapper: FC<ModalWrapperProps> = memo(
     return (
       <div
         className={twMerge(
-          "absolute left-0 top-0 z-50 flex h-screen w-screen overflow-hidden",
+          "absolute left-0 top-0 z-[999] flex h-screen w-screen overflow-hidden",
         )}
       >
         <div
           className={twMerge(
-            "relative z-50 h-fit w-fit transition-all",
+            "relative z-[999] h-fit w-fit transition-all",
             ModalWrapperPositionVariant[position],
           )}
         >
