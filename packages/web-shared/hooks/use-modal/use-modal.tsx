@@ -29,7 +29,11 @@ type ModalProperties = {
 
 type ModalContextProperties = {
   modals: ModalProperties[];
-  openModal: (content: ReactNode, params?: ModalParamsProps) => void;
+  openModalWithHistory: (content: ReactNode, params?: ModalParamsProps) => void;
+  openModalWithoutHistory: (
+    content: ReactNode,
+    params?: Partial<ModalVariantProps>,
+  ) => void;
   closeModal: () => void;
   closeAllModals: () => void;
   ModalWrapper: FC<ModalWrapperProps>;
@@ -38,9 +42,10 @@ type ModalContextProperties = {
 
 const modalContext = createContext<ModalContextProperties>({
   modals: [{ content: <></>, params: { showCascading: false } }],
-  openModal: () => "",
-  closeModal: () => "",
-  closeAllModals: () => "",
+  openModalWithHistory: () => '',
+  openModalWithoutHistory: () => '',
+  closeModal: () => '',
+  closeAllModals: () => '',
   ModalWrapper,
   isOpenModal: false,
 });
@@ -63,8 +68,14 @@ const ModalList: FC<ModalListProps> = memo(({ modalsData, cascadeRender }) =>
 export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
   const [modals, setModals] = useState<ModalProperties[]>([]);
 
-  const openModal = useCallback(
+  const openModalWithHistory = useCallback(
     (content: ReactNode, params?: ModalParamsProps) =>
+      setModals((prevProps) => [...prevProps, { content: content, ...params }]),
+    [],
+  );
+
+  const openModalWithoutHistory = useCallback(
+    (content: ReactNode, params?: Partial<ModalVariantProps>) =>
       setModals((prevProps) => [...prevProps, { content: content, ...params }]),
     [],
   );
@@ -80,14 +91,21 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
 
   const modalContextValue: ModalContextProperties = useMemo(
     () => ({
-      openModal,
+      openModalWithHistory,
+      openModalWithoutHistory,
       closeModal,
       closeAllModals,
       modals,
       ModalWrapper,
       isOpenModal: modals.length > 0,
     }),
-    [closeAllModals, closeModal, modals, openModal],
+    [
+      closeAllModals,
+      closeModal,
+      modals,
+      openModalWithHistory,
+      openModalWithoutHistory,
+    ],
   );
 
   return (
@@ -105,4 +123,3 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
 };
 
 export const useOverlay = () => useContext(modalContext);
-
