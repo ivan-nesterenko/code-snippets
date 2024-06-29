@@ -3,7 +3,7 @@ export const timer = () => {
 
   return (callback: (time: number) => void) => {
     const endTime = Date.now();
-    const differenceInSeconds = endTime - startTime;
-    callback(differenceInSeconds);
+    const differenceInMilliSeconds = endTime - startTime;
+    callback(differenceInMilliSeconds);
   };
 };
