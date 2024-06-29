@@ -29,11 +29,7 @@ type ModalProperties = {
 
 type ModalContextProperties = {
   modals: ModalProperties[];
-  openModalWithHistory: (content: ReactNode, params?: ModalParamsProps) => void;
-  openModalWithoutHistory: (
-    content: ReactNode,
-    params?: ModalParamsProps,
-  ) => void;
+  openModal: (content: ReactNode, params?: ModalParamsProps) => void;
   closeModal: () => void;
   closeAllModals: () => void;
   ModalWrapper: FC<ModalWrapperProps>;
@@ -42,8 +38,7 @@ type ModalContextProperties = {
 
 const modalContext = createContext<ModalContextProperties>({
   modals: [{ content: <></>, params: { showCascadingModels: false } }],
-  openModalWithHistory: () => "",
-  openModalWithoutHistory: () => "",
+  openModal: () => "",
   closeModal: () => "",
   closeAllModals: () => "",
   ModalWrapper,
@@ -92,12 +87,7 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
       ModalWrapper,
       isOpenModal: modals.length > 0,
     }),
-    [
-      closeAllModals,
-      closeModal,
-      modals,
-      openModal,
-    ],
+    [closeAllModals, closeModal, modals, openModal],
   );
 
   return (
@@ -115,3 +105,4 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
 };
 
 export const useOverlay = () => useContext(modalContext);
+
