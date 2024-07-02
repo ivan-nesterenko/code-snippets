@@ -5,6 +5,7 @@ declare global {
         [P in keyof T]?: DeepPartial<T[P]>;
       }
     : T;
+  
     interface ObjectConstructor {
     keys<T extends object>(o: T): (keyof T)[];
 
