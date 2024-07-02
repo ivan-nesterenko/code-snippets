@@ -5,5 +5,19 @@ declare global {
         [P in keyof T]?: DeepPartial<T[P]>;
       }
     : T;
+    interface ObjectConstructor {
+    keys<T extends object>(o: T): (keyof T)[];
+
+    entries<TValue, TKey>(
+      o: Record<TKey, TValue> | ArrayLike<TValue>,
+    ): [TKey, TValue][];
+  }
+
+  interface JSON {
+    parse<T = unknown>(
+      text: string,
+      reviver?: (this: unknown, key: string, value: unknown) => unknown,
+    ): T;
+  }
 }
 export {};
