@@ -56,7 +56,7 @@ export type CustomAnimationProps = {
   className: string;
 };
 
-export type OptionalStyleProps = {
+export type AnimationProps = {
   initialEnabled?: false;
   in: {
     onAnimationEnd?: () => void;
@@ -90,7 +90,7 @@ export const useAnimate = ({
   },
   onToggleInAnimation,
   onToggleOutAnimation,
-}: OptionalStyleProps) => {
+}: AnimationProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const refAnimationState = useRef<"IN" | "OUT">("IN");
 
@@ -162,10 +162,10 @@ export const useAnimate = ({
   }, [onInAnimationEnd, onOutAnimationEnd]);
 
   useEffect(() => {
+    elementStyleController(initialEnabled ?? true);
     if (!ref.current) return;
     const element = ref.current;
 
-    elementStyleController(initialEnabled ?? true);
     element.onanimationstart = handleAnimationStart;
     element.onanimationend = handleAnimationEnd;
 
