@@ -1,16 +1,19 @@
 import { type FC, type ReactNode, memo, useCallback } from "react";
 
 import { twMerge } from "tailwind-merge";
-import {
-  type OptionalStyleProps,
-  useOptionalStyle,
-  type OptionalCustomStylePropsVariant,
-  type OptionalDefaultStylePropsVariant,
-} from "../use-optional-style";
+import { useAnimate, type AnimationProps } from "../use-animate";
 
 enum ModalWrapperPositionVariant {
-  CENTRED = "justify-center items-center",
+  BOTTOM_CENTER = "justify-center items-end",
+  BOTTOM_LEFT = "justify-start items-end",
+  BOTTOM_RIGHT = "justify-end items-end",
+  CENTER = "justify-center items-center",
+  CENTER_LEFT = "justify-start items-center",
+  CENTER_RIGHT = "justify-end items-center",
   NONE = "",
+  TOP_CENTER = "justify-center items-start",
+  TOP_LEFT = "justify-start items-start",
+  TOP_RIGHT = "justify-end items-start",
 }
 
 enum ModalWrapperMode {
@@ -19,19 +22,12 @@ enum ModalWrapperMode {
   NONE = "",
 }
 
-type BgAnimationProps = (
-  | OptionalCustomStylePropsVariant
-  | OptionalDefaultStylePropsVariant
-) &
-  Except<OptionalStyleProps, "initialEnabled">;
-
 export type ModalVariantProps = {
   position?: keyof typeof ModalWrapperPositionVariant;
   mode?: keyof typeof ModalWrapperMode;
   onBgClick?: () => void;
   className?: string;
-  autoCloseOnBgClick?: boolean;
-  bgAnimationProps?: BgAnimationProps;
+  animationProps?: AnimationProps;
 };
 
 export type ModalWrapperProps = {
@@ -42,37 +38,39 @@ export const ModalWrapper: FC<ModalWrapperProps> = memo(
   ({
     children,
     className,
-    position = "CENTRED",
+    position = "TOP_LEFT",
     mode = "SHADING",
     onBgClick,
-    bgAnimationProps = {
-      animationStyle: "FADE" as const,
-      timing: "MEDIUM" as const,
-    },
-    autoCloseOnBgClick = true,
+    animationProps,
   }) => {
-   const { disableStyle: disableWrapperStyle, ref } = useOptionalStyle({
-      ...bgAnimationProps,
-      onDisable: autoCloseOnBgClick ? onBgClick : bgAnimationProps.onDisable,
-    });
-
-    const handleBgClick = useCallback(
-      () => (autoCloseOnBgClick ? disableWrapperStyle() : onBgClick?.()),
-      [autoCloseOnBgClick, disableWrapperStyle, onBgClick],
+    const { toggleOutAnimation, ref } = useAnimate(
+      animationProps
+        ? animationProps
+        : {
+            in: {
+              timing: "LONG",
+              defaultAnimation: "FADE_IN",
+            },
+            out: {
+              timing: "LONG",
+              defaultAnimation: "FADE_OUT",
+            },
+          },
     );
+
+    const handleBgClick = useCallback(() => {
+      onBgClick?.();
+      toggleOutAnimation?.();
+    }, [onBgClick, toggleOutAnimation]);
 
     return (
       <div
         className={twMerge(
           "absolute left-0 top-0 z-[999] flex h-screen w-screen overflow-hidden",
+          ModalWrapperPositionVariant[position],
         )}
       >
-        <div
-          className={twMerge(
-            "relative z-[999] h-fit w-fit transition-all",
-            ModalWrapperPositionVariant[position],
-          )}
-        >
+        <div className={twMerge("relative z-[999] h-fit w-fit transition-all")}>
           {children}
         </div>
         <div
@@ -88,4 +86,3 @@ export const ModalWrapper: FC<ModalWrapperProps> = memo(
     );
   },
 );
-
