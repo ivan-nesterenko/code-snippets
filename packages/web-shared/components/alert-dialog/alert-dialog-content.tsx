@@ -1,7 +1,9 @@
 "use client";
 
-import { AlertDialogOverlay, AlertDialogPortal, Content } from "@radix-ui/react-alert-dialog";
+import { Content } from "@radix-ui/react-alert-dialog";
 import { ComponentPropsWithoutRef, ElementRef, forwardRef } from "react";
+import { AlertDialogOverlay } from "./alert-dialog-overlay";
+import { AlertDialogPortal } from ./alert-dialog-portal";
 
 import { cn } from "../../utils";
 
