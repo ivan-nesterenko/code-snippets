@@ -1,15 +1,10 @@
 declare global {
   type Except<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
-  type OptionalFields<T, TFields extends keyof T> = Except<T, TFields> &
-    (
-      | {
-          [T in TFields]: T[TFields];
-        }
-      | {
-          [T in TFields]: never;
-        }
-    );
+  type nullable = false | undefined | null;
+
+  type NullableFields<T, TFields extends keyof T> = Omit<T, TFields> &
+    ({ [K in TFields]: T[K] } | { [K in TFields]?: never });
 
   type Tuple<T = unknown, N extends number = 1, R extends T[] = []> = R['length'] extends N
     ? R
