@@ -3,8 +3,12 @@ declare global {
 
   type nullable = false | undefined | null;
 
-  type NullableFields<T, TFields extends keyof T> = Omit<T, TFields> &
-    ({ [K in TFields]: T[K] } | { [K in TFields]?: never });
+  type NullableFields<T, TFields extends keyof T, KExist = {}, KOptional = {}> = Omit<T, TFields> &
+    (({ [K in TFields]: T[K] } & KExist) | ({ [K in TFields]?: never } & KOptional));
+
+  type OptionalFields<T, KExist = {}, KOptional = {}> =
+    | ({ [K in keyof T]: T[K] } & KExist)
+    | ({ [K in keyof T]?: never } & KOptional);
 
   type Tuple<T = unknown, N extends number = 1, R extends T[] = []> = R['length'] extends N
     ? R
