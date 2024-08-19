@@ -1,10 +1,18 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type { Config } from "tailwindcss";
+const plugin = require('tailwindcss/plugin');
 
 const config = {
   content: ["./src/**/*.{js,ts,jsx,tsx}", "./assets/**/*.svg"],
   darkMode: ["class"],
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), plugin(function ({ addUtilities, addComponents, e, config }) {
+      addComponents({
+        '.centered': {
+          'justify-content': 'center',
+          'align-items': 'center',
+        },
+      });
+    }),],
   prefix: "",
   theme: {
     container: {
