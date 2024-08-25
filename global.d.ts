@@ -3,15 +3,22 @@ declare global {
 
   type nullable = false | undefined | null;
 
-  type DotPrefix<T extends string> = T extends '' ? '' : `.${T}`;
+  type DotPrefix<T extends string> = T extends "" ? "" : `.${T}`;
+
+  type UnionKeys<T> = {
+    [K in keyof T]?: T[K] | undefined;
+  };
+
+  type ExtractLiteral<T, U extends keyof T, V extends T[U]> = T extends { [key in U]: V }
+    ? T
+    : never;
 
   type DotNestedKeys<T> = (
     T extends object
-      ? { [K in Exclude<keyof T, symbol>]: `${K}${DotPrefix<DotNestedKeys<T[K]>>}` }[Exclude<
-          keyof T,
-          symbol
-        >]
-      : ''
+      ? {
+          [K in Exclude<keyof T, symbol>]: `${K}${DotPrefix<DotNestedKeys<T[K]>>}`;
+        }[Exclude<keyof T, symbol>]
+      : ""
   ) extends infer D
     ? Extract<D, string>
     : never;
@@ -26,7 +33,7 @@ declare global {
     | ({ [K in keyof T]: T[K] } & TOptional)
     | ({ [K in keyof T]?: never } & KOptional);
 
-  type Tuple<T = unknown, N extends number = 1, R extends T[] = []> = R['length'] extends N
+  type Tuple<T = unknown, N extends number = 1, R extends T[] = []> = R["length"] extends N
     ? R
     : Tuple<T, N, [T, ...R]>;
 
@@ -55,7 +62,9 @@ declare global {
   interface ObjectConstructor {
     keys<T extends object>(o: T): (keyof T)[];
 
-    entries<TValue, TKey>(o: Record<TKey, TValue> | ArrayLike<TValue>): [TKey, TValue][];
+    entries<TValue, TKey extends string | number | symbol>(
+      o: Record<TKey, TValue> | ArrayLike<TValue>,
+    ): [TKey, TValue][];
   }
 
   interface JSON {
