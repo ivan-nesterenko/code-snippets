@@ -29,9 +29,7 @@ declare global {
   > &
     (({ [K in TFields]: T[K] } & TOptional) | ({ [K in TFields]?: never } & KOptional));
 
-  type OptionalFields<T, TOptional = {}, KOptional = {}> =
-    | ({ [K in keyof T]: T[K] } & TOptional)
-    | ({ [K in keyof T]?: never } & KOptional);
+  type Optional<T> = { [K in keyof T]: T[K] } | { [K in keyof T]?: never };
 
   type Tuple<T = unknown, N extends number = 1, R extends T[] = []> = R["length"] extends N
     ? R
