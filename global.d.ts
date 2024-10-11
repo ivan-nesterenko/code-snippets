@@ -23,12 +23,6 @@ declare global {
     ? Extract<D, string>
     : never;
 
-  type NullableFields<T, TFields extends keyof T, TOptional = {}, KOptional = {}> = Omit<
-    T,
-    TFields
-  > &
-    (({ [K in TFields]: T[K] } & TOptional) | ({ [K in TFields]?: never } & KOptional));
-
   type Optional<T> = { [K in keyof T]: T[K] } | { [K in keyof T]?: never };
 
   type Tuple<T = unknown, N extends number = 1, R extends T[] = []> = R["length"] extends N
