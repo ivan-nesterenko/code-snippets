@@ -13,7 +13,7 @@ type ModalStateProps<TSuccess = unknown, Terror = unknown, TOpen = unknown> = {
 
 export const useModalState = <TSuccess = unknown, Terror = unknown, TOpen = unknown>(
   arg1: string | ModalStateProps<TSuccess, Terror, TOpen> = '',
-  arg2: ModalStateProps<TSuccess, Terror, TOpen> = {},
+  arg2: ModalStateProps<TSuccess, Terror, TOpen> & { queryKey?: never } = {},
 ) => {
   const queryKey = typeof arg1 === 'string' ? arg1 : arg1.queryKey || '';
 
