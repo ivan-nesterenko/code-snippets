@@ -51,6 +51,10 @@ declare global {
     toLocaleUpperCase(locales?: string | string[]): Uppercase<string>;
   }
 
+  interface Number {
+    toLocaleString(locales?: 'en-US', options?: Intl.NumberFormatOptions): string;
+  }
+
   interface ObjectConstructor {
     keys<T extends object>(o: T): (keyof T)[];
 
