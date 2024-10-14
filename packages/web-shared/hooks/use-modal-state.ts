@@ -2,23 +2,23 @@ import { useCallback, useState } from 'react';
 
 import { useSearchParams } from './use-search-params';
 
-type ModalStateProps<TSuccess = unknown, Terror = unknown, TOpen = unknown> = {
+type ModalStateProps = {
   initialValue?: boolean;
   onClose?: () => void;
-  onOpen?: (T?: TOpen) => void;
-  onSuccess?: (T?: TSuccess) => void;
-  onDismiss?: (T?: Terror) => void;
+  onOpen?: () => void;
+  onSuccess?: () => void;
+  onDismiss?: () => void;
   paramKey?: string;
 };
 
 export const useModalState = <
+  ParamValue = string,
   TSuccess = unknown,
   Terror = unknown,
   TOpen = unknown,
-  ParamValue = string,
 >(
-  arg1: string | ModalStateProps<TSuccess, Terror, TOpen> = '',
-  arg2: Except<ModalStateProps<TSuccess, Terror, TOpen>, 'paramKey'> = {},
+  arg1: string | ModalStateProps = '',
+  arg2: Except<ModalStateProps, 'paramKey'> = {},
 ) => {
   const paramKey = typeof arg1 === 'string' ? arg1 : arg1.paramKey || '';
   const {
