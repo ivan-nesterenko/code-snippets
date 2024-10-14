@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { useSearchParams } from './useSearchParams';
+import { useSearchParams } from './use-search-params';
 
 type ModalStateProps<TSuccess = unknown, Terror = unknown, TOpen = unknown> = {
   initialValue?: boolean;
@@ -8,15 +8,19 @@ type ModalStateProps<TSuccess = unknown, Terror = unknown, TOpen = unknown> = {
   onOpen?: (T?: TOpen) => void;
   onSuccess?: (T?: TSuccess) => void;
   onDismiss?: (T?: Terror) => void;
-  queryKey?: string;
+  paramKey?: string;
 };
 
-export const useModalState = <TSuccess = unknown, Terror = unknown, TOpen = unknown>(
+export const useModalState = <
+  TSuccess = unknown,
+  Terror = unknown,
+  TOpen = unknown,
+  ParamValue = string,
+>(
   arg1: string | ModalStateProps<TSuccess, Terror, TOpen> = '',
-  arg2: ModalStateProps<TSuccess, Terror, TOpen> & { queryKey?: never } = {},
+  arg2: Except<ModalStateProps<TSuccess, Terror, TOpen>, 'paramKey'> = {},
 ) => {
-  const queryKey = typeof arg1 === 'string' ? arg1 : arg1.queryKey || '';
-
+  const paramKey = typeof arg1 === 'string' ? arg1 : arg1.paramKey || '';
   const {
     initialValue = false,
     onClose,
@@ -25,7 +29,7 @@ export const useModalState = <TSuccess = unknown, Terror = unknown, TOpen = unkn
     onSuccess,
   } = typeof arg1 === 'object' ? arg1 : arg2;
 
-  const { deleteValue, value, setValue } = useSearchParams(queryKey);
+  const { deleteValue, value, setValue } = useSearchParams<ParamValue>(paramKey);
 
   const [isOpen, setOpen] = useState(initialValue);
 
@@ -74,7 +78,7 @@ export const useModalState = <TSuccess = unknown, Terror = unknown, TOpen = unkn
     handleOpenModal,
     handleSuccessModal,
     handleDismissModal,
-    setQueryValue: setValue,
-    queryValue: value,
+    setParamValue: setValue,
+    paramsValue: value,
   };
 };
