@@ -1,10 +1,10 @@
 import { useSearchParams as useDomSearchParams } from 'react-router-dom';
 
-export const useSearchParams = (key: string) => {
+export const useSearchParams = <T = string>(key: string) => {
   const [searchParams, setSearchParams] = useDomSearchParams();
 
-  const handleChangeValue = (value: string | number | boolean) => {
-    if (value) setSearchParams({ [key]: value.toString() });
+  const handleChangeValue = (value: T) => {
+    if (value) setSearchParams({ [key]: JSON.stringify(value) });
   };
 
   const handleDeleteParam = () => {
@@ -13,8 +13,10 @@ export const useSearchParams = (key: string) => {
     setSearchParams(updatedSearchParams);
   };
 
+  const value = searchParams.get(key);
+
   return {
-    value: searchParams.get(key),
+    value: (value ? JSON.parse<T>(value) : value) as T | null,
     setValue: handleChangeValue,
     deleteValue: handleDeleteParam,
     urlSearchParams: searchParams,
